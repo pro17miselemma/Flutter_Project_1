@@ -4,7 +4,17 @@ void main() => runApp(const MyApp());
 
 final _router = GoRouter(
   routes: [
-    GoRoute(path: '/', builder: 
+    GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
+    GoRoute(
+      path: '/product/:id',
+      builder: (context, state) {
+        final id = state.pathParameters['id']!;
+        final filter = state.uri.queryParameters['filter'] ?? 'all';
+        return ProductDetailScreen(id: id, filter: filter);
+      },
+    ),
+  ],
+);
 
 class HomeScreen extends StatelessWidget {
     const HomeScreen({super.key});
@@ -15,7 +25,7 @@ class HomeScreen extends StatelessWidget {
             appBar: AppBar(title: const Text('Home')),
             body: Center(
                 child: ElevatedButton(
-                    onPressed: () => context.go('/details'),
+                    onPressed: () => context.go('/product/42?filter=popular'),
                     child: const Text('Go to Details'),
                 ),
             ),
@@ -48,3 +58,20 @@ class MyApp extends StatelessWidget {
     }
 }
 
+class ProductDetailScreen extends StatelessWidget {
+  final String id;
+  final String filter;
+  const ProductDetailScreen({
+    super.key,
+    required this.id,
+    required this.filter,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Product $id')),
+      body: Center(child: Text('Showing product $id\nFilter: $filter')),
+    );
+  }
+}
